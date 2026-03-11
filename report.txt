@@ -1,0 +1,29 @@
+Profiluję ytdl-org/youtube-dl...
+
+============================================================
+PROFIL REPOZYTORIUM: ytdl-org/youtube-dl
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       139,844
+  Forki:          10,603
+  Otwarte issues: 4,118
+  Język:          Python
+  Licencja:       Unlicense
+
+--- Issues (ostatnie 78) ---
+  Zamknięte:                   87%
+  Średni czas do odpowiedzi:   2.2 dni
+  Top etykiety:                duplicate (24), incomplete (18), question (16), invalid (8), broken-IE (8)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  18%
+  Odrzucone:                   44%
+  Otwarte:                     38%
+  Średni czas do merge:        3.4 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  0
+  Commitów (rok temu):         12
+  Trend:                       spadek o 100%
+  Unikalni kontrybutorzy:      387
