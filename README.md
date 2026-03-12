@@ -1,4 +1,4 @@
-# Lab 02: GitHub API — stalking z klasą
+# Lab 02: GitHub API - stalking z klasą
 
 ## Czy wiesz, że...
 
@@ -6,7 +6,7 @@ Według badań (które właśnie wymyśliłem), przeciętny developer sprawdza l
 
 ## Kontekst
 
-W poprzednim labie kopaliśmy w historii gita lokalnie. Dziś idziemy dalej — sięgamy po dane, które żyją na serwerze GitHuba: issues, pull requesty, statystyki kontrybutorów, aktywność. GitHub udostępnia REST API, które pozwala odpytywać repozytoria programowo — bez klikania po interfejsie webowym.
+W poprzednim labie kopaliśmy w historii gita lokalnie. Dziś idziemy dalej - sięgamy po dane, które żyją na serwerze GitHuba: issues, pull requesty, statystyki kontrybutorów, aktywność. GitHub udostępnia REST API, które pozwala odpytywać repozytoria programowo - bez klikania po interfejsie webowym.
 
 W realnej pracy inżyniera umiejętność korzystania z API GitHuba przydaje się do: automatyzacji workflow (boty, CI/CD), analizy projektów OSS przed podjęciem decyzji o adopcji, monitorowania zdrowia własnych repozytoriów, albo po prostu zbierania danych do badań.
 
@@ -22,7 +22,7 @@ Po tym laboratorium będziesz potrafić:
 
 - Python 3.9+ z biblioteką `requests` (lub `PyGithub`)
 - Konto na GitHubie
-- **Personal Access Token (PAT)** — instrukcja poniżej
+- **Personal Access Token (PAT)** - instrukcja poniżej
 - Podstawowa znajomość REST API (co to GET, JSON, status code)
 
 ### Jak uzyskać Personal Access Token
@@ -32,7 +32,7 @@ Po tym laboratorium będziesz potrafić:
 3. Nadaj nazwę (np. "ORKiPO lab")
 4. Zaznacz scope: `public_repo` (wystarczy do czytania publicznych repozytoriów)
 5. Kliknij "Generate token"
-6. **Skopiuj token od razu** — nie zobaczysz go ponownie
+6. **Skopiuj token od razu** - nie zobaczysz go ponownie
 
 **WAŻNE:** Nie commitujcie tokena do repozytorium! Używajcie zmiennej środowiskowej:
 
@@ -93,7 +93,9 @@ print(f"Pozostało: {limits['remaining']}")
 print(f"Reset: {limits['reset']}")
 ```
 
-Z tokenem masz 5000 zapytań na godzinę. Bez tokena — 60. Raczej wystarczy, ale lepiej nie odpytywać w pętli bez sensu.
+Z tokenem masz 5000 zapytań na godzinę. Bez tokena - 60. Raczej wystarczy, ale lepiej nie odpytywać w pętli bez sensu.
+
+**Wskazówka:** Jeśli `response.json()` zwraca dziwne dane, sprawdź `response.status_code` - kod 200 to sukces, 401 to problem z tokenem, 403 to rate limit.
 
 ### Zadanie 2: GitHub Profiler (60 min)
 
@@ -114,7 +116,15 @@ Dla danego repo (np. `psf/requests`) pobrać i wyliczyć:
 4. **Aktywność:**
    - Liczba commitów w ostatnim miesiącu
    - Liczba commitów rok temu w analogicznym miesiącu (dla porównania)
-   - Liczba unikatowych kontrybutorów (ostatnia strona z API)
+   - Liczba unikatowych kontrybutorów
+
+**Wskazówki do implementacji:**
+
+- **`analyze_issues`**: Endpoint `/issues` zwraca też pull requesty! Prawdziwy issue nie ma klucza `"pull_request"` w JSONie. Filtrujcie. Do czasu pierwszej odpowiedzi - pole `issue["comments"]` mówi ile jest komentarzy, a `issue["comments_url"]` daje URL do ich pobrania. Wystarczy `?per_page=1`, żeby dostać pierwszy. Ograniczcie się do ~20 issues, żeby nie zjeść rate limitu.
+- **`analyze_pull_requests`**: Każdy PR ma pole `"merged_at"` - jeśli jest `null`, PR nie został zmergowany. PR z `"state": "closed"` i `"merged_at": null` to PR odrzucony. Czas do merge'a to różnica między `"merged_at"` a `"created_at"`.
+- **`analyze_activity`**: Endpoint `/commits` przyjmuje parametry `since` i `until` w formacie ISO 8601. Do "ostatniego miesiąca" użyj `since = now - 30 dni`. Do "rok temu" użyj `since = now - 365 dni`, `until = now - 335 dni`.
+- **Parsowanie dat**: GitHub zwraca daty jak `"2024-03-15T10:30:00Z"`. W Pythonie 3.9-3.10 trzeba `.replace("Z", "+00:00")` przed `datetime.fromisoformat()`. Różnica w dniach: `(dt2 - dt1).total_seconds() / 86400`.
+- **Zliczanie etykiet**: `collections.Counter` i `counter.most_common(5)` to wasi przyjaciele.
 
 **Punkt startowy:**
 
@@ -274,10 +284,12 @@ PROFIL REPOZYTORIUM: psf/requests
 --- Aktywność ---
   Commitów (ostatni miesiąc):  15
   Commitów (rok temu):         23
-  Trend:                       spadek o 35%
+  Unikatowi kontrybutorzy:     12
 ```
 
-### Zadanie 3: Porównywarka repozytoriów (45 min) — dla ambitnych
+**Wskazówka do `print_report`:** Dane z `analyze_issues`, `analyze_pull_requests` i `analyze_activity` to słowniki - wystarczy odwołać się do kluczy (np. `issues["closed_pct"]`) i wypisać sformatowane wartości. Dla etykiet można użyć joina: `", ".join(f"{name} ({count})" for name, count in top_labels)`.
+
+### Zadanie 3: Porównywarka repozytoriów (45 min) - dla ambitnych
 
 Rozszerzcie `github_profiler.py` (lub napiszcie oddzielny skrypt `compare_repos.py`) o tryb porównania dwóch repozytoriów.
 
@@ -305,13 +317,15 @@ Commitów (ost. miesiąc)  15              28
 Verdict: httpx wygląda aktywniej i szybciej reaguje na issues.
 ```
 
+**Wskazówka:** Nie musicie pisać wszystkiego od nowa - możecie ponownie użyć funkcji z zadania 2. Wystarczy wywołać `get_repo_info`, `analyze_issues`, `analyze_pull_requests` i `analyze_activity` dla obu repozytoriów i wypisać wyniki obok siebie. Do formatowania tabeli ASCII: f-stringi z wyrównaniem, np. `f"{'Metryka':<25}{'repo1':>15}{'repo2':>15}"`.
+
 ## Co oddajecie
 
 W swoim branchu `lab02_nazwisko1_nazwisko2`:
 
-1. **`github_profiler.py`** — działający skrypt z zadania 2
-2. **`report.txt`** — output skryptu dla wybranego repo (skopiowany z konsoli)
-3. *(opcjonalnie)* **`compare_repos.py`** — porównywarka z zadania 3
+1. **`github_profiler.py`** - działający skrypt z zadania 2
+2. **`report.txt`** - output skryptu dla wybranego repo (skopiowany z konsoli)
+3. *(opcjonalnie)* **`compare_repos.py`** - porównywarka z zadania 3
 
 **WAŻNE:** Nie commitujcie swojego tokena! Sprawdźcie `git diff` przed `git add`.
 
@@ -330,13 +344,13 @@ W swoim branchu `lab02_nazwisko1_nazwisko2`:
 O: Sprawdź czy `echo $GITHUB_TOKEN` zwraca coś sensownego. Jeśli zamknąłeś terminal, musisz ponownie `export GITHUB_TOKEN=...`.
 
 **P: Dostaję 403 / rate limit exceeded.**
-O: Sprawdź `/rate_limit`. Z tokenem masz 5000 req/h — jeśli to przekroczyłeś, musisz poczekać do resetu. Bez tokena masz tylko 60.
+O: Sprawdź `/rate_limit`. Z tokenem masz 5000 req/h - jeśli to przekroczyłeś, musisz poczekać do resetu. Bez tokena masz tylko 60.
 
 **P: Endpoint `/issues` zwraca mi pull requesty!**
 O: Tak, to znana cecha API GitHuba. Issue bez klucza `"pull_request"` to prawdziwy issue. Filtrujcie.
 
 **P: Jak policzyć czas do pierwszej odpowiedzi na issue?**
-O: Dla każdego issue pobierz komentarze (`/issues/{number}/comments`), weź datę pierwszego. Uwaga: to dodatkowe zapytanie per issue — rozważ ograniczenie do np. 20 issues.
+O: Dla każdego issue pobierz komentarze (`/issues/{number}/comments`), weź datę pierwszego. Uwaga: to dodatkowe zapytanie per issue - rozważ ograniczenie do np. 20 issues.
 
 **P: Mogę użyć biblioteki PyGithub zamiast requests?**
 O: Tak, jak najbardziej. PyGithub opakowuje REST API i obsługuje paginację za Ciebie. Ale upewnij się, że rozumiesz co się dzieje pod spodem.
@@ -351,4 +365,4 @@ O: Tak, jak najbardziej. PyGithub opakowuje REST API i obsługuje paginację za 
 - [requests library](https://docs.python-requests.org/)
 
 ---
-*"Jeśli nie możesz tego zmierzyć, nie możesz tym zarządzać."* — Peter Drucker (albo ktoś inny, nikt nie jest pewien)
+*"Jeśli nie możesz tego zmierzyć, nie możesz tym zarządzać."* - Peter Drucker (albo ktoś inny, nikt nie jest pewien)
