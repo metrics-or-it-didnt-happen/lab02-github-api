@@ -95,6 +95,8 @@ print(f"Reset: {limits['reset']}")
 
 Z tokenem masz 5000 zapytań na godzinę. Bez tokena — 60. Raczej wystarczy, ale lepiej nie odpytywać w pętli bez sensu.
 
+**Wskazówka:** Jeśli `response.json()` zwraca dziwne dane, sprawdź `response.status_code` — kod 200 to sukces, 401 to problem z tokenem, 403 to rate limit.
+
 ### Zadanie 2: GitHub Profiler (60 min)
 
 Napiszcie skrypt `github_profiler.py`, który dla podanego repozytorium generuje kompletny profil na podstawie danych z API.
@@ -115,6 +117,14 @@ Dla danego repo (np. `psf/requests`) pobrać i wyliczyć:
    - Liczba commitów w ostatnim miesiącu
    - Liczba commitów rok temu w analogicznym miesiącu (dla porównania)
    - Liczba unikatowych kontrybutorów (ostatnia strona z API)
+
+**Wskazówki do implementacji:**
+
+- **`analyze_issues`**: Endpoint `/issues` zwraca też pull requesty! Prawdziwy issue nie ma klucza `"pull_request"` w JSONie. Filtrujcie. Do czasu pierwszej odpowiedzi — pole `issue["comments"]` mówi ile jest komentarzy, a `issue["comments_url"]` daje URL do ich pobrania. Wystarczy `?per_page=1`, żeby dostać pierwszy. Ograniczcie się do ~20 issues, żeby nie zjeść rate limitu.
+- **`analyze_pull_requests`**: Każdy PR ma pole `"merged_at"` — jeśli jest `null`, PR nie został zmergowany. PR z `"state": "closed"` i `"merged_at": null` to PR odrzucony. Czas do merge'a to różnica między `"merged_at"` a `"created_at"`.
+- **`analyze_activity`**: Endpoint `/commits` przyjmuje parametry `since` i `until` w formacie ISO 8601. Do "ostatniego miesiąca" użyj `since = now - 30 dni`. Do "rok temu" użyj `since = now - 365 dni`, `until = now - 335 dni`.
+- **Parsowanie dat**: GitHub zwraca daty jak `"2024-03-15T10:30:00Z"`. W Pythonie 3.9-3.10 trzeba `.replace("Z", "+00:00")` przed `datetime.fromisoformat()`. Różnica w dniach: `(dt2 - dt1).total_seconds() / 86400`.
+- **Zliczanie etykiet**: `collections.Counter` i `counter.most_common(5)` to wasi przyjaciele.
 
 **Punkt startowy:**
 
@@ -277,6 +287,8 @@ PROFIL REPOZYTORIUM: psf/requests
   Trend:                       spadek o 35%
 ```
 
+**Wskazówka do `print_report`:** Dane z `analyze_issues`, `analyze_pull_requests` i `analyze_activity` to słowniki — wystarczy odwołać się do kluczy (np. `issues["closed_pct"]`) i wypisać sformatowane wartości. Dla etykiet można użyć joina: `", ".join(f"{name} ({count})" for name, count in top_labels)`.
+
 ### Zadanie 3: Porównywarka repozytoriów (45 min) — dla ambitnych
 
 Rozszerzcie `github_profiler.py` (lub napiszcie oddzielny skrypt `compare_repos.py`) o tryb porównania dwóch repozytoriów.
@@ -304,6 +316,8 @@ Commitów (ost. miesiąc)  15              28
 
 Verdict: httpx wygląda aktywniej i szybciej reaguje na issues.
 ```
+
+**Wskazówka:** Nie musicie pisać wszystkiego od nowa — możecie ponownie użyć funkcji z zadania 2. Wystarczy wywołać `get_repo_info`, `analyze_issues`, `analyze_pull_requests` i `analyze_activity` dla obu repozytoriów i wypisać wyniki obok siebie. Do formatowania tabeli ASCII: f-stringi z wyrównaniem, np. `f"{'Metryka':<25}{'repo1':>15}{'repo2':>15}"`.
 
 ## Co oddajecie
 
