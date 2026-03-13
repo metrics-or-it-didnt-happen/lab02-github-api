@@ -1,0 +1,18 @@
+Pobieranie danych dla psf/requests i django/django...
+
+PORÓWNANIE: psf/requests vs django/django
+======================================================================
+Metryka                                  requests             django
+----------------------------------------------------------------------
+Gwiazdki                                   53,910             87,089
+Forki                                       9,779             33,748
+Otwarte issues                                302                426
+% zamkniętych issues                          74%                 0%
+Śr. czas odpowiedzi (dni)                     0.2                0.0
+% zmergowanych PR                             18%                14%
+Śr. czas merge (dni)                          0.1                0.7
+Commitów (ost. miesiąc)                        12                 84
+Commitów (rok temu)                             3                 83
+
+======================================================================
+Verdict: requests wygląda zdrowiej: wyższy % zamkniętych issues (74%), wyższy % zmergowanych PR (18%), szybszy merge PR (0.1 dni), wzrost aktywności (300%).

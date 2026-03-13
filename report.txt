@@ -1,0 +1,24 @@
+============================================================
+PROFIL REPOZYTORIUM: spacedriveapp/spacedrive
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       37,343
+  Forki:          1,232
+  Otwarte issues: 21
+  Język:          Rust
+  Licencja:       AGPL-3.0
+--- Issues (ostatnie 100) ---
+  Zamknięte:                  45
+  Średni czas do odpowiedzi:  0.0
+  Top etykiety:
+kind/bug 16, status/needs-triage 16,
+     --- Pull Requests (ostatnie 50) ---
+   Zmergowane:                  64%
+   Odrzucone:                   20%
+   Otwarte:                     16%
+   Średni czas do merge:        1.4 dni
+ --- Aktywność ---
+   Commitów (ostatni miesiąc):  0
+   Commitów (rok temu):         30
+   Trend:                       spadek o 100%
