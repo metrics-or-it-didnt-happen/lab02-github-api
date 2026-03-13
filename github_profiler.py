@@ -74,8 +74,13 @@ def parse_dt(iso_str: str) -> datetime:
     return datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
 
 
-def analyze_issues(owner_repo: str, headers: dict[str, str], count: int = 100) -> dict[str, Any]:
+def analyze_issues(
+    owner_repo: str, headers: dict[str, str], repo_info: dict[str, Any], count: int = 100
+) -> dict[str, Any]:
     """Analyze recent issues: response time, close rate, top labels."""
+    if not repo_info.get("has_issues", True):
+        return {"total": 0, "disabled": True}
+
     raw = fetch_paginated(
         f"{GITHUB_API}/repos/{owner_repo}/issues",
         headers,
@@ -131,9 +136,12 @@ def analyze_issues(owner_repo: str, headers: dict[str, str], count: int = 100) -
 
 
 def analyze_pull_requests(
-    owner_repo: str, headers: dict[str, str], count: int = 50
+    owner_repo: str, headers: dict[str, str], repo_info: dict[str, Any], count: int = 50
 ) -> dict[str, Any]:
     """Analyze recent pull requests: merge time, merge rate."""
+    if not repo_info.get("has_pull_requests", True):
+        return {"total": 0, "disabled": True}
+
     prs = fetch_paginated(
         f"{GITHUB_API}/repos/{owner_repo}/pulls",
         headers,
@@ -237,7 +245,7 @@ def format_report(
 ) -> str:
     """Format the complete report as a string."""
     lines: list[str] = []
-    lines.append(f"\n{'=' * 60}")
+    lines.append(f"{'=' * 60}")
     lines.append(f"REPOSITORY PROFILE: {repo_info['full_name']}")
     lines.append(f"{'=' * 60}")
 
@@ -253,7 +261,9 @@ def format_report(
 
     # Issues
     lines.append(f"\n--- Issues (last {issues.get('total', 0)}) ---")
-    if issues.get("total", 0) > 0:
+    if not repo_info.get("has_issues", True):
+        lines.append("  Issues are disabled on this repository.")
+    elif issues.get("total", 0) > 0:
         lines.append(f"  Closed:                      {issues['close_pct']:.0f}%")
         if issues["avg_response_days"] is not None:
             lines.append(
@@ -271,7 +281,9 @@ def format_report(
 
     # Pull Requests
     lines.append(f"\n--- Pull Requests (last {prs.get('total', 0)}) ---")
-    if prs.get("total", 0) > 0:
+    if not repo_info.get("has_pull_requests", True):
+        lines.append("  Pull requests are disabled on this repository.")
+    elif prs.get("total", 0) > 0:
         lines.append(f"  Merged:                      {prs['merged_pct']:.0f}%")
         lines.append(f"  Rejected:                    {prs['rejected_pct']:.0f}%")
         lines.append(f"  Open:                        {prs['open_pct']:.0f}%")
@@ -305,20 +317,20 @@ def compare_repos(repo1: str, repo2: str, headers: dict[str, str]) -> str:
     """Generate a side-by-side comparison of two repositories."""
     print(f"Profiling {repo1}...")
     info1 = get_repo_info(repo1, headers)
-    issues1 = analyze_issues(repo1, headers)
-    prs1 = analyze_pull_requests(repo1, headers)
+    issues1 = analyze_issues(repo1, headers, info1)
+    prs1 = analyze_pull_requests(repo1, headers, info1)
     act1 = analyze_activity(repo1, headers)
 
     print(f"Profiling {repo2}...")
     info2 = get_repo_info(repo2, headers)
-    issues2 = analyze_issues(repo2, headers)
-    prs2 = analyze_pull_requests(repo2, headers)
+    issues2 = analyze_issues(repo2, headers, info2)
+    prs2 = analyze_pull_requests(repo2, headers, info2)
     act2 = analyze_activity(repo2, headers)
 
     w = 24  # metric column width
     v = 16  # value column width
     lines: list[str] = []
-    lines.append(f"\nCOMPARISON: {repo1} vs {repo2}")
+    lines.append(f"COMPARISON: {repo1} vs {repo2}")
     lines.append("=" * 60)
     lines.append(f"{'Metric':<{w}} {repo1.split('/')[-1]:>{v}} {repo2.split('/')[-1]:>{v}}")
     lines.append("-" * 60)
@@ -330,17 +342,37 @@ def compare_repos(repo1: str, repo2: str, headers: dict[str, str]) -> str:
     row("Forks", f"{info1['forks_count']:,}", f"{info2['forks_count']:,}")
     row("Open issues", f"{info1['open_issues_count']:,}", f"{info2['open_issues_count']:,}")
 
-    if issues1.get("total") and issues2.get("total"):
-        row("% closed issues", f"{issues1['close_pct']:.0f}%", f"{issues2['close_pct']:.0f}%")
-        r1 = f"{issues1['avg_response_days']:.1f} days" if issues1["avg_response_days"] else "N/A"
-        r2 = f"{issues2['avg_response_days']:.1f} days" if issues2["avg_response_days"] else "N/A"
-        row("Avg response time", r1, r2)
+    def issue_val(iss: dict[str, Any], key: str, fmt: str = "") -> str:
+        if iss.get("disabled"):
+            return "disabled"
+        if not iss.get("total"):
+            return "N/A"
+        val = iss.get(key)
+        if val is None:
+            return "N/A"
+        return f"{val:{fmt}}" if fmt else str(val)
 
-    if prs1.get("total") and prs2.get("total"):
-        row("% merged PRs", f"{prs1['merged_pct']:.0f}%", f"{prs2['merged_pct']:.0f}%")
-        m1 = f"{prs1['avg_merge_days']:.1f} days" if prs1["avg_merge_days"] else "N/A"
-        m2 = f"{prs2['avg_merge_days']:.1f} days" if prs2["avg_merge_days"] else "N/A"
-        row("Avg merge time", m1, m2)
+    def pr_val(pr: dict[str, Any], key: str, fmt: str = "") -> str:
+        if pr.get("disabled"):
+            return "disabled"
+        if not pr.get("total"):
+            return "N/A"
+        val = pr.get(key)
+        if val is None:
+            return "N/A"
+        return f"{val:{fmt}}" if fmt else str(val)
+
+    row("Issues", issue_val(issues1, "total"), issue_val(issues2, "total"))
+    row("% closed issues", issue_val(issues1, "close_pct", ".0f") + "%" if issues1.get("close_pct") else issue_val(issues1, "close_pct"), issue_val(issues2, "close_pct", ".0f") + "%" if issues2.get("close_pct") else issue_val(issues2, "close_pct"))
+    r1 = f"{issues1['avg_response_days']:.1f} days" if issues1.get("avg_response_days") else issue_val(issues1, "avg_response_days")
+    r2 = f"{issues2['avg_response_days']:.1f} days" if issues2.get("avg_response_days") else issue_val(issues2, "avg_response_days")
+    row("Avg response time", r1, r2)
+
+    row("PRs", pr_val(prs1, "total"), pr_val(prs2, "total"))
+    row("% merged PRs", pr_val(prs1, "merged_pct", ".0f") + "%" if prs1.get("merged_pct") else pr_val(prs1, "merged_pct"), pr_val(prs2, "merged_pct", ".0f") + "%" if prs2.get("merged_pct") else pr_val(prs2, "merged_pct"))
+    m1 = f"{prs1['avg_merge_days']:.1f} days" if prs1.get("avg_merge_days") else pr_val(prs1, "avg_merge_days")
+    m2 = f"{prs2['avg_merge_days']:.1f} days" if prs2.get("avg_merge_days") else pr_val(prs2, "avg_merge_days")
+    row("Avg merge time", m1, m2)
 
     row("Commits (last month)", act1["recent_commits"], act2["recent_commits"])
 
@@ -395,8 +427,8 @@ def main() -> None:
         print(f"Profiling {owner_repo}...")
 
         repo_info = get_repo_info(owner_repo, headers)
-        issues = analyze_issues(owner_repo, headers)
-        prs = analyze_pull_requests(owner_repo, headers)
+        issues = analyze_issues(owner_repo, headers, repo_info)
+        prs = analyze_pull_requests(owner_repo, headers, repo_info)
         activity = analyze_activity(owner_repo, headers)
 
         report = format_report(repo_info, issues, prs, activity)

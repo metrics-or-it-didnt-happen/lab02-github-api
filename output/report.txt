@@ -1,4 +1,3 @@
-
 ============================================================
 REPOSITORY PROFILE: django/django
 ============================================================
@@ -12,7 +11,7 @@ REPOSITORY PROFILE: django/django
   License:        BSD-3-Clause
 
 --- Issues (last 0) ---
-  No issues found.
+  Issues are disabled on this repository.
 
 --- Pull Requests (last 50) ---
   Merged:                      14%
