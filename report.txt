@@ -1,0 +1,20 @@
+--- Generuję profil dla: psf/requests ---
+Stars: 53910
+Forks: 9779
+Open Issues: 302
+Language: Python
+License: Apache License 2.0
+
+[Issues Analysis]
+Closed vs Open: 17/6 (73.9% closed)
+Avg time to first response: 3.9 h
+Top Labels: Propose Close
+
+[Pull Requests]
+Merged: 9, Rejected: 30, Open: 11
+Avg time to merge: 3.6 h
+
+[Activity]
+Commits (last 30 days): 12
+Commits (same month year ago): 7
+Total contributors: ~1&anon=true&
