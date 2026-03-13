@@ -7,8 +7,6 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 import requests
 
-import requests
-
 GITHUB_API = "https://api.github.com"
 
 
@@ -58,7 +56,6 @@ def get_repo_info(owner_repo: str, headers: dict) -> dict:
 def analyze_issues(owner_repo: str, headers: dict,
                    count: int = 100) -> dict:
     """Analyze recent issues: response time, close rate, top labels."""
-    
     url = f"{GITHUB_API}/repos/{owner_repo}/issues"
     params = {"state": "all", "sort": "created", "direction": "desc"}
     
@@ -100,8 +97,6 @@ def analyze_issues(owner_repo: str, headers: dict,
 def analyze_pull_requests(owner_repo: str, headers: dict,
                           count: int = 50) -> dict:
     """Analyze recent pull requests: merge time, merge rate."""
-    from datetime import datetime
-    
     url = f"{GITHUB_API}/repos/{owner_repo}/pulls"
     params = {"state": "all", "sort": "created", "direction": "desc"}
     prs = fetch_paginated(url, headers, params, max_items=count)
@@ -129,17 +124,16 @@ def analyze_pull_requests(owner_repo: str, headers: dict,
 
 def analyze_activity(owner_repo: str, headers: dict) -> dict:
     """Compare recent activity with a year ago."""
-    url = f"{GITHUB_API}/repos/{owner_repo}/commits" # 
+    url = f"{GITHUB_API}/repos/{owner_repo}/commits" 
     
-    now = datetime.now(timezone.utc) # [cite: 66]
-    month_ago = now - timedelta(days=30) # [cite: 67]
+    now = datetime.now(timezone.utc)
+    month_ago = now - timedelta(days=30)
     
-    # Porównanie z rokiem temu: since = 365 dni temu, until = 335 dni temu [cite: 71]
     year_ago_start = now - timedelta(days=365)
     year_ago_end = now - timedelta(days=335)
 
-    recent_params = {"since": month_ago.isoformat(), "until": now.isoformat()} # [cite: 63, 64]
-    recent_commits = fetch_paginated(url, headers, recent_params, max_items=100) # [cite: 68, 69]
+    recent_params = {"since": month_ago.isoformat(), "until": now.isoformat()}
+    recent_commits = fetch_paginated(url, headers, recent_params, max_items=100)
 
     old_params = {"since": year_ago_start.isoformat(), "until": year_ago_end.isoformat()}
     old_commits = fetch_paginated(url, headers, old_params, max_items=100)
@@ -166,7 +160,6 @@ def print_report(repo_info: dict, issues: dict, prs: dict,
 
     issues_tot = issues['total']
     closed_pct = int((issues['closed'] / issues_tot * 100)) if issues_tot > 0 else 0
-    # breakpoint()
     labels_str = ", ".join([f"{name} ({count})" for name, count in issues['top_labels']])
     
     print(f"\n--- Issues (ostatnie {issues_tot}) ---")
@@ -205,23 +198,94 @@ def print_report(repo_info: dict, issues: dict, prs: dict,
     print(f"  Trend:                       {trend_str}\n")
 
 
+def print_comparison(repo1_name: str, info1: dict, iss1: dict, prs1: dict, act1: dict,
+                     repo2_name: str, info2: dict, iss2: dict, prs2: dict, act2: dict) -> None:
+    """Print formatted comparison table for two repositories."""
+    print(f"\nPORÓWNANIE: {repo1_name} vs {repo2_name}")
+    print("=" * 60)
+    
+    n1 = repo1_name.split('/')[-1]
+    n2 = repo2_name.split('/')[-1]
+    
+    print(f"{'Metryka':<25}{n1:>15}{n2:>15}")
+    print("-" * 60)
+
+    def calc_iss_pct(iss):
+        return int((iss['closed'] / iss['total'] * 100)) if iss['total'] > 0 else 0
+    
+    def calc_pr_pct(prs):
+        return int((prs['merged'] / prs['total'] * 100)) if prs['total'] > 0 else 0
+
+    def row(name, val1, val2):
+        print(f"{name:<25}{str(val1):>15}{str(val2):>15}")
+
+    row("Gwiazdki", f"{info1.get('stargazers_count', 0):,}", f"{info2.get('stargazers_count', 0):,}")
+    row("Forki", f"{info1.get('forks_count', 0):,}", f"{info2.get('forks_count', 0):,}")
+    row("Otwarte issues", f"{info1.get('open_issues_count', 0):,}", f"{info2.get('open_issues_count', 0):,}")
+    row("% zamkniętych issues", f"{calc_iss_pct(iss1)}%", f"{calc_iss_pct(iss2)}%")
+    row("Śr. czas odpowiedzi", f"{iss1['avg_response_days']:.1f} dni", f"{iss2['avg_response_days']:.1f} dni")
+    row("% zmergowanych PR", f"{calc_pr_pct(prs1)}%", f"{calc_pr_pct(prs2)}%")
+    row("Śr. czas merge", f"{prs1['avg_merge_days']:.1f} dni", f"{prs2['avg_merge_days']:.1f} dni")
+    row("Commitów (ost. miesiąc)", act1['recent_commits'], act2['recent_commits'])
+    
+    print("\nVerdict: ", end="")
+    
+    score1 = 0
+    score2 = 0
+    
+    if iss1['avg_response_days'] < iss2['avg_response_days']: score1 += 1
+    else: score2 += 1
+    
+    if prs1['avg_merge_days'] < prs2['avg_merge_days']: score1 += 1
+    else: score2 += 1
+    
+    if act1['recent_commits'] > act2['recent_commits']: score1 += 1
+    else: score2 += 1
+    
+    if score1 > score2:
+        print(f"{n1} wygląda aktywniej i szybciej reaguje na issues oraz Pull Requesty.\n")
+    elif score2 > score1:
+        print(f"{n2} wygląda aktywniej i szybciej reaguje na issues oraz Pull Requesty.\n")
+    else:
+        print("Oba repozytoria wydają się podobnie aktywne i zdrowe.\n")
+
+
 def main():
     if len(sys.argv) < 2:
-        print("Użycie: python github_profiler.py <owner/repo>")
-        print("Przykład: python github_profiler.py psf/requests")
+        print("Użycie 1 (pojedyncze repo): python github_profiler.py <owner/repo>")
+        print("Użycie 2 (porównanie):      python github_profiler.py <owner/repo1> <owner/repo2>")
+        print("Przykład:                   python github_profiler.py psf/requests encode/httpx")
         sys.exit(1)
 
-    owner_repo = sys.argv[1]
     headers = get_headers()
 
-    print(f"Profiluję {owner_repo}...")
+    if len(sys.argv) == 2:
+        owner_repo = sys.argv[1]
+        print(f"Profiluję {owner_repo}...")
+        repo_info = get_repo_info(owner_repo, headers)
+        issues = analyze_issues(owner_repo, headers)
+        prs = analyze_pull_requests(owner_repo, headers)
+        activity = analyze_activity(owner_repo, headers)
+        print_report(repo_info, issues, prs, activity)
 
-    repo_info = get_repo_info(owner_repo, headers)
-    issues = analyze_issues(owner_repo, headers)
-    prs = analyze_pull_requests(owner_repo, headers)
-    activity = analyze_activity(owner_repo, headers)
+    elif len(sys.argv) >= 3:
+        repo1 = sys.argv[1]
+        repo2 = sys.argv[2]
+        
+        print(f"Pobieram dane dla {repo1}...")
+        info1 = get_repo_info(repo1, headers)
+        iss1 = analyze_issues(repo1, headers)
+        prs1 = analyze_pull_requests(repo1, headers)
+        act1 = analyze_activity(repo1, headers)
 
-    print_report(repo_info, issues, prs, activity)
+        print(f"Pobieram dane dla {repo2}...")
+        info2 = get_repo_info(repo2, headers)
+        iss2 = analyze_issues(repo2, headers)
+        prs2 = analyze_pull_requests(repo2, headers)
+        act2 = analyze_activity(repo2, headers)
+
+        print_comparison(repo1, info1, iss1, prs1, act1, 
+                         repo2, info2, iss2, prs2, act2)
 
 
 if __name__ == "__main__":
