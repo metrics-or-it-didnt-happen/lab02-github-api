@@ -1,0 +1,29 @@
+Profiluję pallets/flask...
+
+============================================================
+PROFIL REPOZYTORIUM: pallets/flask
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       71,393
+  Forki:          16,744
+  Otwarte issues: 3
+  Język:          Python
+  Licencja:       BSD-3-Clause
+
+--- Issues (ostatnie 54) ---
+  Zamknięte:                   96%
+  Średni czas do odpowiedzi:   1.4 dni
+  Top etykiety:                bug (9), enhancement (6), docs (4), good first issue (3), question (2)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  72%
+  Odrzucone:                   18%
+  Otwarte:                     10%
+  Średni czas do merge:        3.4 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  5
+  Commitów (rok temu):         14
+  Trend:                       spadek o 64%
+  Unikalni kontrybutorzy:      3
