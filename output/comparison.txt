@@ -3,11 +3,11 @@ COMPARISON: psf/requests vs encode/httpx
 ============================================================
 Metric                           requests            httpx
 ------------------------------------------------------------
-Stars                              53,860           15,140
-Forks                               9,769            1,056
-Open issues                           298              149
-% merged PRs                          32%               4%
-Avg merge time                   1.0 days         0.5 days
-Commits (last month)                   19                1
+Stars                              53,910           15,193
+Forks                               9,779            1,063
+Open issues                           301              149
+% merged PRs                          18%               4%
+Avg merge time                   0.1 days         0.5 days
+Commits (last month)                   12                1
 
 Verdict: requests appears healthier and more active (4/4 metrics).
