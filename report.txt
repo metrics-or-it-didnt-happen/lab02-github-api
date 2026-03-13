@@ -1,0 +1,27 @@
+============================================================
+PROFIL REPOZYTORIUM: psf/requests
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       53,921
+  Forki:          9,775
+  Otwarte issues: 301
+  Język:          Python
+  Licencja:       Apache-2.0
+
+--- Issues (ostatnie 100) ---
+  Zamknięte:                   87%
+  Średni czas do odpowiedzi:   0.9 dni
+  Top etykiety:                Question/Not a bug (11), actions/autoclose-qa (9), Feature Request (4), actions/autoclose-feat (4), Propose Close (3)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  18%
+  Odrzucone:                   58%
+  Otwarte:                     24%
+  Średni czas do merge:        0.1 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  14
+  Commitów (rok temu):         13
+  Unikatowi kontrybutorzy:    402
+  Trend:                       wzrost o 8%
