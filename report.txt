@@ -1,0 +1,61 @@
+Profiluję psf/requests...
+
+============================================================
+PROFIL REPOZYTORIUM: psf/requests
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       53,910
+  Forki:          9,779
+  Otwarte issues: 301
+  Język:          Python
+  Licencja:       Apache-2.0
+
+--- Issues (ostatnie 23) ---
+  Zamknięte:                   78.0%
+  Średni czas do odpowiedzi:   0.2 dni
+  Top etykiety:                Propose Close (1)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  18%
+  Odrzucone:                   60%
+  Otwarte:                     22%
+  Średni czas do merge:        0.1 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  12
+  Commitów (rok temu):         3
+  Trend:                       wzrost o 300%
+  Unikalni kontrybutorzy:      402
+
+-->COŚ MAŁO LABELS, WIEC DODAJE JESZCZE INNE<---
+
+Profiluję alibaba/OpenSandbox...
+
+============================================================
+PROFIL REPOZYTORIUM: alibaba/OpenSandbox
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       7,696
+  Forki:          568
+  Otwarte issues: 54
+  Język:          Python
+  Licencja:       Apache-2.0
+
+--- Issues (ostatnie 27) ---
+  Zamknięte:                   41.0%
+  Średni czas do odpowiedzi:   0.2 dni
+  Top etykiety:                sdks (2), feature (2), bug (1), component/ingress (1), component/server (1)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  52%
+  Odrzucone:                   26%
+  Otwarte:                     22%
+  Średni czas do merge:        0.7 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  100
+  Commitów (rok temu):         0
+  Trend:                       brak danych z zeszłego roku
+  Unikalni kontrybutorzy:      32
