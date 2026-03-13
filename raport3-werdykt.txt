@@ -1,0 +1,22 @@
+============================================================
+PORÓWNANIE psf/requests vs encode/httpx
+============================================================
+Metryka                            repo1          repo2
+------------------------------------------------------------
+Gwiazdki                          53,854         15,134
+Forki                              9,780          1,063
+Otwarte issues                       302            149
+% zamkniętych issues               87.0%           0.0%
+Śr. czas odpowiedzi              5.62 dni        0.00 dni
+% zmergowanych PR                    18%             4%
+Śr. czas merge                    0.1 dni         0.5 dni
+Commitów (ost. miesiąc)               12              1
+============================================================
+Werdykt psf/requests:
+------------------------------------------------------------
+-> Więcej gwiazdek
+-> Więcej forków
+-> Wyższy % zamkniętych issues
+-> Wyższy % zmergowanych PR
+-> Krótszy czas merge'owania PR
+-> Większa aktywność (commity w ost. miesiącu)

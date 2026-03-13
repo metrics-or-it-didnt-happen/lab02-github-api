@@ -1,26 +1,24 @@
-Profiluję psf/requests...
-
 ============================================================
 PROFIL REPOZYTORIUM: psf/requests
 ============================================================
 
 --- Podstawowe metryki ---
-  Gwiazdki:       53,910
-  Forki:          9,777
+  Gwiazdki:       53,854
+  Forki:          9,779
   Otwarte issues: 302
   Język:          Python
   Licencja:       Apache-2.0
 
---- Issues ---
-  Średni czas do pierwszej odpowiedzi:       0.90 dni
-  Procent zamkniętych vs otwartych:          84.0% vs 16.0%
-  Top 5 najczęstszych etykiet (labels):      Feature Request (3), actions/autoclose-feat (3), Propose Close (1), Question/Not a bug (1), actions/autoclose-qa (1)
+--- Issues (ostatnie 100) --
+  Średni czas do pierwszej odpowiedzi:       5.62 dni
+  Procent zamkniętych vs otwartych:          87.0% vs 13.0%
+  Top 5 najczęstszych etykiet (labels):      Question/Not a bug (11), actions/autoclose-qa (9), Feature Request (4), actions/autoclose-feat (4), Propose Close (3)
 
 --- Pull Requests (ostatnie 50) ---
   Średni czas do merge:        0.1 dni
   Zmergowane:                  18%
-  Odrzucone:                   60%
-  Otwarte:                     22%
+  Odrzucone:                   58%
+  Otwarte:                     24%
 
 --- Aktywność ---
   Commitów (ostatni miesiąc):       12

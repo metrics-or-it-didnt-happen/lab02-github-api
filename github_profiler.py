@@ -63,14 +63,10 @@ def parse_github_date(date_str: str) -> datetime:
 
 def analyze_issues(owner_repo: str, headers: dict, count: int = 100) -> dict:
     """Analyze recent issues: response time, close rate, top labels."""
-    # TODO: Twój kod tutaj
-    # Endpoint: GET /repos/{owner}/{repo}/issues
-    # Parametry: state=all, sort=created, direction=desc, per_page=100
-    # Uwaga: endpoint /issues zwraca też pull requesty!
-    #   Filtruj: issue bez klucza "pull_request"
+
     url = f"{GITHUB_API}/repos/{owner_repo}/issues"
-    params = {"state": "all", "sort": "created", "direction": "desc", "per_page": 20}
-    raw_items = fetch_paginated(url, headers, params, max_items=count * 2)
+    params = {"state": "all", "sort": "created", "direction": "desc", "per_page": 100}
+    raw_items = fetch_paginated(url, headers, params, max_items=4 * count)
     issues = [i for i in raw_items if "pull_request" not in i][:count]
 
     response_times = []
@@ -85,6 +81,15 @@ def analyze_issues(owner_repo: str, headers: dict, count: int = 100) -> dict:
                 diff = (first_comment_date - created_date).total_seconds() / 86400
                 response_times.append(diff)
 
+    if len(issues) == 0:
+        return {
+            "ave_response_time": 0,
+            "percent_closed": 0,
+            "percent_open": 0,
+            "top_5_labels": [],
+            "total": 0,
+        }
+
     sum_closed = len([i for i in issues if i["state"] == "closed"])
     percent_closed = (sum_closed / len(issues)) * 100.0
     percent_open = 100.0 - percent_closed
@@ -98,14 +103,12 @@ def analyze_issues(owner_repo: str, headers: dict, count: int = 100) -> dict:
         "percent_closed": percent_closed,
         "percent_open": percent_open,
         "top_5_labels": Counter(labels).most_common(5),
+        "total": len(issues),
     }
 
 
 def analyze_pull_requests(owner_repo: str, headers: dict, count: int = 50) -> dict:
     """Analyze recent pull requests: merge time, merge rate."""
-    # TODO: Twój kod tutaj
-    # Endpoint: GET /repos/{owner}/{repo}/pulls
-    # Parametry: state=all, sort=created, direction=desc, per_page=5ass
 
     url = f"{GITHUB_API}/repos/{owner_repo}/pulls"
     params = {"state": "all", "sort": "created", "direction": "desc", "per_page": 50}
@@ -137,9 +140,6 @@ def analyze_pull_requests(owner_repo: str, headers: dict, count: int = 50) -> di
 
 def analyze_activity(owner_repo: str, headers: dict, count: int = 100) -> dict:
     """Compare recent activity with a year ago."""
-    # TODO: Twój kod tutaj
-    # Endpoint: GET /repos/{owner}/{repo}/commits
-    # Użyj parametrów since= i until= z datami ISO 8601
 
     today = datetime.now()
     month_ago = (today - timedelta(days=30)).isoformat()
@@ -161,14 +161,14 @@ def analyze_activity(owner_repo: str, headers: dict, count: int = 100) -> dict:
     for item in raw_items_last_month:
         author_info = item.get("commit", {}).get("author", {})
         author_email = author_info.get("email")
-        
+
         if author_email:
             unique_cunt.add(author_email)
 
     return {
         "sum_last_month": sum_last_month,
         "sum_prev_month": sum_prev_month,
-        "unique_cont": len(unique_cunt)
+        "unique_cont": len(unique_cunt),
     }
 
 
@@ -188,7 +188,7 @@ def print_report(repo_info: dict, issues: dict, prs: dict, activity: dict) -> No
         f"  Licencja:       {license_name.get('spdx_id', 'N/A') if license_name else 'N/A'}"
     )
 
-    print(f"\n--- Issues ---")
+    print(f"\n--- Issues (ostatnie {issues['total']}) --")
     print(
         f"  Średni czas do pierwszej odpowiedzi:       {issues['ave_response_time']:.2f} dni"
     )
@@ -196,7 +196,6 @@ def print_report(repo_info: dict, issues: dict, prs: dict, activity: dict) -> No
         f"  Procent zamkniętych vs otwartych:          {issues['percent_closed']:.1f}% vs {issues['percent_open']:.1f}%"
     )
 
-    # Sformatowanie etykiet, by wyglądały estetycznie np. "bug (5), help wanted (2)"
     labels_formatted = ", ".join(
         [f"{name} ({count})" for name, count in issues["top_5_labels"]]
     )
@@ -214,8 +213,6 @@ def print_report(repo_info: dict, issues: dict, prs: dict, activity: dict) -> No
     print(f"  Commitów (ostatni miesiąc):       {activity['sum_last_month']}")
     print(f"  Commitów (rok temu):              {activity['sum_prev_month']}")
     print(f"  Liczba unikatowych kontrybutorów: {activity["unique_cont"]}")
-
-    pass
 
 
 def main():
