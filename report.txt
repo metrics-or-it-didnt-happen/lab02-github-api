@@ -1,0 +1,29 @@
+Profiluję sipeed/picoclaw...
+
+============================================================
+PROFIL REPOZYTORIUM: sipeed/picoclaw
+============================================================
+
+--- Podstawowe metryki ---
+  Gwiazdki:       24,453
+  Forki:          3,270
+  Otwarte issues: 571
+  Język:          Go
+  Licencja:       MIT
+
+--- Issues (ostatnie 100) ---
+  Zamknięte:                   34%
+  Średni czas do odpowiedzi:   0.2 dni
+  Top etykiety:                type: bug (59), type: enhancement (30), domain: channel (28)
+
+--- Pull Requests (ostatnie 50) ---
+  Zmergowane:                  18%
+  Odrzucone:                   26%
+  Otwarte:                     56%
+  Średni czas do merge:        0.0 dni
+
+--- Aktywność ---
+  Commitów (ostatni miesiąc):  100
+  Commitów (rok temu):         0
+  Trend:                       brak danych z zeszłego roku
+
