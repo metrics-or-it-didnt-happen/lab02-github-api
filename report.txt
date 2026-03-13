@@ -1,0 +1,8 @@
+Nazwa: psf/requests
+Gwiazdki: 53910
+Forki: 9779
+Otwarte issues: 301
+Język: Python
+Limit: 5000/h
+Pozostało: 4993
+Reset: 1773404940
