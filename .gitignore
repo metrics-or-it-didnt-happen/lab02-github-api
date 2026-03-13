@@ -11,6 +11,3 @@ wheels/
 
 # Environment
 .env
-
-# Output
-output/

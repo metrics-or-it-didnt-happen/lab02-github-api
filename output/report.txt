@@ -1,0 +1,27 @@
+
+============================================================
+REPOSITORY PROFILE: django/django
+============================================================
+
+--- Basic Metrics ---
+  Stars:          86,995
+  Forks:          33,717
+  Open issues:    424
+  Watchers:       2,250
+  Language:       Python
+  License:        BSD-3-Clause
+
+--- Issues (last 0) ---
+  No issues found.
+
+--- Pull Requests (last 50) ---
+  Merged:                      18%
+  Rejected:                    46%
+  Open:                        36%
+  Avg time to merge:           0.5 days
+
+--- Activity ---
+  Commits (last 30 days):      90
+  Commits (year ago, 30 days): 74
+  Trend:                       up 22%
+  Total contributors:          3,404
