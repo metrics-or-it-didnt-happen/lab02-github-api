@@ -1,0 +1,16 @@
+PORÓWNANIE: pallets/flask vs django/django
+============================================================
+Metryka                        flask           django         
+============================================================
+Gwiazdki                       71,393          87,089         
+Forki                          16,744          33,748         
+Otwarte issues                 3               426            
+% zamkniętych issues           100%            0%             
+Śr. czas odpowiedzi            4.8 dni         N/A            
+% zmergowanych PR              18%             14%            
+Śr. czas merge                 4.4 dni         0.7 dni        
+Commitów (ost. miesiąc)        19              84             
+Verdict: django wygląda na zdrowsze repozytorium, ponieważ:
+  > ma więcej gwiazdek
+  > szybciej merguje PR
+  > ma więcej commitów w ostatnim miesiącu
