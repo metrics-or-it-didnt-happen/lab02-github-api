@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "GitHub API profiler - repository health analysis."
 requires-python = ">=3.12"
 dependencies = [
-    "requests>=2.32",
+    "PyGithub>=2.6",
     "python-dotenv>=1.1",
 ]
 

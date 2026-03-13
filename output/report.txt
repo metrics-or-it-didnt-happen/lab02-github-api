@@ -5,15 +5,16 @@ REPOSITORY PROFILE: django/django
 --- Basic Metrics ---
   Stars:          87,089
   Forks:          33,748
-  Open issues:    426
+  Open issues:    N/A (disabled)
+  Open PRs:       420
   Watchers:       2,249
   Language:       Python
   License:        BSD-3-Clause
 
---- Issues (last 0) ---
+--- Issues (0/0) ---
   Issues are disabled on this repository.
 
---- Pull Requests (last 50) ---
+--- Pull Requests (420/20,410) ---
   Merged:                      14%
   Rejected:                    46%
   Open:                        40%

@@ -4,13 +4,12 @@ Metric                           requests            httpx
 ------------------------------------------------------------
 Stars                              53,910           15,193
 Forks                               9,779            1,063
-Open issues                           301              149
-Issues                                 47         disabled
-% closed issues                       85%         disabled
+Issues                               4130         disabled
+% closed issues                       96%         disabled
 Avg response time                0.2 days         disabled
-PRs                                    50               50
+PRs                                  2816             1804
 % merged PRs                          18%               4%
 Avg merge time                   0.1 days         0.5 days
 Commits (last month)                   12                1
 
-Verdict: requests appears healthier and more active (4/4 metrics).
+Verdict: requests appears healthier and more active (2/2 metrics).
