@@ -268,9 +268,9 @@ def print_report(repo_info: dict, issues: dict, prs: dict,
     ### printing activity stats ###
     print()
     print("--- AKTYWNOSC ---")
-    print(f"Commitow ostatni miesiac:  {activity['commits_last_month']}")
-    print(f"Commitow rok temu:  {activity['commits_last_year']}")
-    print(f"Unikatowi kontrybutorzy:  {activity['unique_contributors']}")
+    print(f"  Commitow ostatni miesiac:  {activity['commits_last_month']}")
+    print(f"  Commitow rok temu:  {activity['commits_last_year']}")
+    print(f"  Unikatowi kontrybutorzy:  {activity['unique_contributors']}")
 
 
 def main():
